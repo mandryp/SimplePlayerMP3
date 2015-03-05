@@ -30,11 +30,10 @@ public class PlayListMP3 {
 
     private final DefaultListModel myListModel;
     private final JList myList;
-
     private TrackMP3 curTrack;
-
     private final SimplePlayerMP3 curPlay;
     private SimplePlayerMP3 prevPlay;
+    private final JLabel jlStatus;
 
     public PlayListMP3() {
 
@@ -71,7 +70,7 @@ public class PlayListMP3 {
         popupMenu.add(setPlMenuItem("Остановить", "stop", iconStop));
 
 //      Строка состояния        
-        JLabel jl = new JLabel("     ");
+        jlStatus = new JLabel("     ");
 
 //      список плейлист
         myListModel = new DefaultListModel();
@@ -82,7 +81,7 @@ public class PlayListMP3 {
 
         jp.add(jm, BorderLayout.NORTH);
         jp.add(jsp, BorderLayout.CENTER);
-        jp.add(jl, BorderLayout.SOUTH);
+        jp.add(jlStatus, BorderLayout.SOUTH);
         frame.getContentPane().add(jp);
 
         String userDir = System.getProperty("user.dir");
@@ -92,6 +91,10 @@ public class PlayListMP3 {
         }
 
         frame.setVisible(true);
+    }
+
+    public void setStatusText(String text) {
+        jlStatus.setText(text);
     }
 
     public DefaultListModel getMyListModel() {
@@ -104,6 +107,12 @@ public class PlayListMP3 {
 
     public TrackMP3 getCurTrack() {
         return curTrack;
+    }
+
+    public void setPlayCurTrack(int Ind) {
+        myList.setSelectedIndex(Ind);
+        curTrack = (TrackMP3) myListModel.getElementAt(Ind);
+        curPlay.play();
     }
 
     private JMenuItem setPlMenuItem(String text, String actionCommand, ImageIcon icon) {
