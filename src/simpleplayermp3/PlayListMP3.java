@@ -3,6 +3,8 @@ package simpleplayermp3;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -77,6 +79,7 @@ public class PlayListMP3 {
         myList = new JList(myListModel);
         myList.setComponentPopupMenu(popupMenu);
         myList.addMouseListener(new MyMouseListener());
+        myList.addKeyListener(new MyKeyAdapter());
         JScrollPane jsp = new JScrollPane(myList);
 
         jp.add(jm, BorderLayout.NORTH);
@@ -122,12 +125,26 @@ public class PlayListMP3 {
         return mni;
     }
 
+    private class MyKeyAdapter extends KeyAdapter {
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                curTrack = (TrackMP3) myListModel.getElementAt(myList.getSelectedIndex());
+                curPlay.play();
+            } else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                removeSelectedTracks();
+            } else if (e.getKeyCode() == KeyEvent.VK_INSERT) {
+                addFilesMP3toList();
+            }
+        }
+
+    }
+
     private class MenuActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setAcceptAllFileFilterUsed(false);
             switch (e.getActionCommand()) {
                 case "play": {
                     curTrack = (TrackMP3) myListModel.getElementAt(myList.getSelectedIndex());
@@ -142,6 +159,8 @@ public class PlayListMP3 {
                     break;
                 }
                 case "open": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setAcceptAllFileFilterUsed(false);
                     fileChooser.setFileFilter(new FileNameExtensionFilter("Список треков, *.pls", "pls"));
                     int showOpenDialog = fileChooser.showOpenDialog(null);
                     if (showOpenDialog == JFileChooser.APPROVE_OPTION) {
@@ -151,6 +170,8 @@ public class PlayListMP3 {
                     break;
                 }
                 case "save": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setAcceptAllFileFilterUsed(false);
                     fileChooser.setFileFilter(new FileNameExtensionFilter("Список треков, *.pls", "pls"));
                     int showSaveDialog = fileChooser.showSaveDialog(null);
                     if (showSaveDialog == JFileChooser.APPROVE_OPTION) {
@@ -163,33 +184,41 @@ public class PlayListMP3 {
                     break;
                 }
                 case "add": {
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Tracks mp3", "mp3");
-                    System.out.println("1");
-                    fileChooser.setFileFilter(filter);
-                    fileChooser.setMultiSelectionEnabled(true);
-                    fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                    int showOpenDialog = fileChooser.showOpenDialog(null);
-                    if (showOpenDialog == JFileChooser.APPROVE_OPTION) {
-                        File[] files = fileChooser.getSelectedFiles();
-                        for (File file1 : files) {
-                            File file = file1;
-                            FileOperations.addFileToList(file, myListModel);
-                        }
-                    }
+                    addFilesMP3toList();
                     break;
                 }
                 case "remove": {
-                    int[] selInds = myList.getSelectedIndices();
-                    for (int i = 0; i < selInds.length; i++) {
-                        int selInd = selInds[i];
-                        myListModel.remove(selInd - i);
-                    }
+                    removeSelectedTracks();
                     break;
                 }
 
             }
         }
+    }
 
+    private void addFilesMP3toList() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tracks mp3", "mp3");
+        fileChooser.setFileFilter(filter);
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        int showOpenDialog = fileChooser.showOpenDialog(null);
+        if (showOpenDialog == JFileChooser.APPROVE_OPTION) {
+            File[] files = fileChooser.getSelectedFiles();
+            for (File file1 : files) {
+                File file = file1;
+                FileOperations.addFileToList(file, myListModel);
+            }
+        }
+    }
+
+    private void removeSelectedTracks() {
+        int[] selInds = myList.getSelectedIndices();
+        for (int i = 0; i < selInds.length; i++) {
+            int selInd = selInds[i];
+            myListModel.remove(selInd - i);
+        }
     }
 
     private class MyMouseListener extends MouseAdapter {

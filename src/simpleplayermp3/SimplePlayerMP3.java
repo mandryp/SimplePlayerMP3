@@ -33,7 +33,7 @@ public class SimplePlayerMP3 {
         if (plmp3.getCurTrack().equals(prevTrack)) {
             prevTrack = null;
             return;
-        };
+        }
 
         try {
 
