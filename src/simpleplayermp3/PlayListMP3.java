@@ -3,6 +3,7 @@ package simpleplayermp3;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -26,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PlayListMP3 {
@@ -36,9 +38,14 @@ public class PlayListMP3 {
     private final SimplePlayerMP3 curPlay;
     private SimplePlayerMP3 prevPlay;
     private final JLabel jlStatus;
+    private final JFileChooser fileChooser;
+    private final String userDir;
 
     public PlayListMP3() {
 
+        userDir = System.getProperty("user.dir");
+        fileChooser = new JFileChooser(userDir);
+        fileChooser.setAcceptAllFileFilterUsed(false);
         curPlay = new SimplePlayerMP3();
 
 //      основной фрейм
@@ -87,7 +94,6 @@ public class PlayListMP3 {
         jp.add(jlStatus, BorderLayout.SOUTH);
         frame.getContentPane().add(jp);
 
-        String userDir = System.getProperty("user.dir");
         File tmpFile = new File(userDir + File.separator + "tmp.pls");
         if (tmpFile.exists()) {
             FileOperations.readListFromFile(tmpFile, myListModel);
@@ -121,6 +127,12 @@ public class PlayListMP3 {
     private JMenuItem setPlMenuItem(String text, String actionCommand, ImageIcon icon) {
         JMenuItem mni = new JMenuItem(text, icon);
         mni.setActionCommand(actionCommand);
+        if (actionCommand.equals("open")) {
+            mni.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+        } else if (actionCommand.equals("save")) {    
+            mni.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+        }
+        
         mni.addActionListener(new MenuActionListener());
         return mni;
     }
@@ -159,8 +171,6 @@ public class PlayListMP3 {
                     break;
                 }
                 case "open": {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setAcceptAllFileFilterUsed(false);
                     fileChooser.setFileFilter(new FileNameExtensionFilter("Список треков, *.pls", "pls"));
                     int showOpenDialog = fileChooser.showOpenDialog(null);
                     if (showOpenDialog == JFileChooser.APPROVE_OPTION) {
@@ -170,8 +180,6 @@ public class PlayListMP3 {
                     break;
                 }
                 case "save": {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setAcceptAllFileFilterUsed(false);
                     fileChooser.setFileFilter(new FileNameExtensionFilter("Список треков, *.pls", "pls"));
                     int showSaveDialog = fileChooser.showSaveDialog(null);
                     if (showSaveDialog == JFileChooser.APPROVE_OPTION) {
@@ -197,8 +205,6 @@ public class PlayListMP3 {
     }
 
     private void addFilesMP3toList() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setAcceptAllFileFilterUsed(false);
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Tracks mp3", "mp3");
         fileChooser.setFileFilter(filter);
         fileChooser.setMultiSelectionEnabled(true);
@@ -269,7 +275,6 @@ public class PlayListMP3 {
             if (op == 0) {
                 curPlay.stop();
                 e.getWindow().setVisible(false);
-                String userDir = System.getProperty("user.dir");
                 File tmpFile = new File(userDir + File.separator + "tmp.pls");
 
                 if (myListModel.isEmpty()) {

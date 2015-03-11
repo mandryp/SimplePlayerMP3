@@ -56,8 +56,10 @@ public class SimplePlayerMP3 {
 
             }.start();
 
-        } catch (JavaLayerException | FileNotFoundException ex) {
-            Logger.getLogger(TrackMP3.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            plmp3.setStatusText("Файл не найден!");
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(SimplePlayerMP3.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -67,7 +69,7 @@ public class SimplePlayerMP3 {
         if (player != null) {
             player.close();
             player = null;
-            plmp3.setStatusText("Make a choice");
+            plmp3.setStatusText("");
         }
     }
 
