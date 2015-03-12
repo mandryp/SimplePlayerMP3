@@ -14,7 +14,6 @@ import javazoom.jl.player.advanced.PlaybackListener;
 public class SimplePlayerMP3 {
 
     private static PlayListMP3 plmp3;
-    private int curPos;
     private TrackMP3 prevTrack;
     private AdvancedPlayer player;
 
@@ -83,9 +82,9 @@ public class SimplePlayerMP3 {
         
         @Override
         public void playbackFinished(PlaybackEvent evt) {
-            curPos = plmp3.getMyListModel().indexOf(plmp3.getCurTrack());
+            int curPos = plmp3.getMyListModel().indexOf(plmp3.getCurTrack());
             if (curPos < (plmp3.getMyListModel().getSize()-1)) {
-                plmp3.setPlayCurTrack(curPos+1);
+                plmp3.setPlayCurTrack(curPos +1);
             }
         }
 

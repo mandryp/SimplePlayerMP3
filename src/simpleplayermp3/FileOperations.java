@@ -5,17 +5,10 @@
  */
 package simpleplayermp3;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -34,20 +27,14 @@ public class FileOperations {
                     int op = JOptionPane.showConfirmDialog(null, "Текущий плейлист не пуст. Заменить?");
                     if (op == 0) {
                         lm.clear();
-                        for (Object list1 : list) {
-                            lm.addElement(list1);
-                        }
+                        for (Object list1 : list) lm.addElement(list1);
                     }
                 } else {
-                    for (Object list1 : list) {
-                        lm.addElement(list1);
-                    }
+                    for (Object list1 : list) lm.addElement(list1);
                 }
 
             }
             ois.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FileOperations.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(FileOperations.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -62,9 +49,6 @@ public class FileOperations {
                 oos.flush();
 
             }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FileOperations.class
-                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(FileOperations.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -72,11 +56,13 @@ public class FileOperations {
 
     }
 
-    public static void addFolderToList(File folder, DefaultListModel dlm) {
+    private static void addFolderToList(File folder, DefaultListModel dlm) {
 
         File[] folderFiles = folder.listFiles();
-        for (File folderFile : folderFiles) {
-            FileOperations.addFileToList(folderFile, dlm);
+        if (folderFiles != null) {
+            for (File folderFile : folderFiles) {
+                FileOperations.addFileToList(folderFile, dlm);
+            }
         }
 
     }
@@ -85,7 +71,8 @@ public class FileOperations {
 
         if (file.isDirectory()) {
             FileOperations.addFolderToList(file, dlm);
-        } else if (file.getName().endsWith(".mp3") && !dlm.contains(file.getName())) {
+        }
+        else if (file.getName().endsWith(".mp3") && !dlm.contains(file.getName())) {
             dlm.addElement(new TrackMP3(file));
         }
 

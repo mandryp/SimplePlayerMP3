@@ -36,7 +36,6 @@ public class PlayListMP3 {
     private final JList myList;
     private TrackMP3 curTrack;
     private final SimplePlayerMP3 curPlay;
-    private SimplePlayerMP3 prevPlay;
     private final JLabel jlStatus;
     private final JFileChooser fileChooser;
     private final String userDir;
@@ -78,7 +77,7 @@ public class PlayListMP3 {
         popupMenu.add(setPlMenuItem("Играть трек", "play", iconPlay));
         popupMenu.add(setPlMenuItem("Остановить", "stop", iconStop));
 
-//      Строка состояния        
+//      Строка состояния
         jlStatus = new JLabel("     ");
 
 //      список плейлист
@@ -108,10 +107,6 @@ public class PlayListMP3 {
 
     public DefaultListModel getMyListModel() {
         return myListModel;
-    }
-
-    public JList getMyList() {
-        return myList;
     }
 
     public TrackMP3 getCurTrack() {
@@ -165,9 +160,7 @@ public class PlayListMP3 {
                     break;
                 }
                 case "stop": {
-                    if (curPlay != null) {
-                        curPlay.stop();
-                    }
+                    curPlay.stop();
                     break;
                 }
                 case "open": {
@@ -213,8 +206,7 @@ public class PlayListMP3 {
         if (showOpenDialog == JFileChooser.APPROVE_OPTION) {
             File[] files = fileChooser.getSelectedFiles();
             for (File file1 : files) {
-                File file = file1;
-                FileOperations.addFileToList(file, myListModel);
+                FileOperations.addFileToList(file1, myListModel);
             }
         }
     }
